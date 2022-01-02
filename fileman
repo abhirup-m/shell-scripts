@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if wmctrl -xa mpv; then
+	exit
+elif wmctrl -xa 'fileman'; then
+	exit
+elif wmctrl -a 'VIM_ALONE'; then 
+	exit
+else
+	st -c "fileman" tmux &> /dev/null &
+	sleep 0.1
+	until tmux send-keys "nnn -P p" enter; do 
+		sleep 0.1
+	done
+fi

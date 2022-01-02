@@ -1,0 +1,7 @@
+#!/bin/bash
+
+drive="$1"
+loc=$(lsblk -pn -o NAME,MOUNTPOINT| grep "$drive" | awk '{$1=""; print $0}' | xargs)
+notify-send "$loc"
+wmctrl -Fa 'fileman' || st -n 'fileman' -t 'fileman' lf "$loc"
+lf -remote "send $id cd \"$loc\""

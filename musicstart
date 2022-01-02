@@ -1,0 +1,8 @@
+#!/bin/bash
+music_dir="/home/kirito/storage/music"
+pgrep mocp || mocp -S
+if mocp -i | grep 'State: STOP'; then
+        mocp -l "$music_dir"/*
+else
+        mocp -G
+fi

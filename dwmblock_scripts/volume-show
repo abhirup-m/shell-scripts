@@ -1,0 +1,17 @@
+#!/bin/bash
+progress_new()
+{
+	if [[ $@ = 100 ]]; then
+		status_pre=" 100% |$(seq 20 | xargs -n1 -I{} echo -n '-')"
+	else
+		pre=$(( $@/5 ))
+		status_pre=" $@% |$(seq ${pre} | xargs -n1 -I{} echo -n '-')"
+	fi
+	echo -e "${status_pre}"
+}
+
+msgid=31412
+vol=$(amixer get Master | tail -n 1 | awk '{printf "%.0f",$3*100/87}')
+
+dunstify -i "/usr/share/icons/Arc/status/symbolic/audio-volume-medium-symbolic.svg" -t 1000 -r ${msgid} "$(progress_new $(amixer get Master | tail -n 1 | awk '{printf "%.0f",$3*100/87}'))"
+[[ "$(amixer get Master | tail -n 1 | cut -d ' ' -f8)" = "[on]" ]] && echo -e " $vol" || echo " $vol"

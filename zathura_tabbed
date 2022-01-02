@@ -1,0 +1,30 @@
+#!/bin/bash
+tab_cmd="tabbed -cd -n zathura"
+xid_file="$HOME/.cache/zathura_tabbed_xid"
+list_file="$HOME/.cache/zathura_tabbed_list"
+IFS=$'\n'
+echo "$@"
+for file in "$@"; do
+	file=$(cd "$(dirname $file)" &> /dev/null && echo "$PWD/$(basename $file)")
+        if [ "$(pgrep -f "$tab_cmd")" ]; then
+                xid=$(cat "$HOME/.cache/zathura_tabbed_xid")
+		if grep "$file" $list_file; then
+			xxid=$(grep "$file" $list_file | awk '{print $NF}')
+                        xprop -id "$xid" -f _TABBED_SELECT_TAB 8s -set _TABBED_SELECT_TAB "$xxid" 
+		else
+                        zathura -e "$xid" "$file" &
+			sleep 0.5
+			xxid=$(xwininfo -children -id $xid  | grep -A 1 children | tail -n 1 | awk '{print $1}')
+			echo -e "$file\t$xxid" >> $list_file
+		fi
+                wmctrl -ia "$xid"
+        else
+                tabbed -cd -n zathura > $xid_file
+		xid=$(cat "$HOME/.cache/zathura_tabbed_xid")
+		zathura -e $xid "$file" &
+		sleep 0.5
+		xxid=$(xwininfo -children -id $xid  | grep -A 1 child | tail -n 1 | awk '{print $1}')
+		echo -e "$file\t$xxid" > $list_file
+        fi
+
+done

@@ -1,0 +1,8 @@
+#!/bin/bash
+err_file=$HOME/.cache/dwmoutput
+if make -C ~/.config/dwm install 2> "$err_file"; then
+	pkill dwm
+else 
+	st bash -c "less $err_file"
+fi
+rm "$err_file"

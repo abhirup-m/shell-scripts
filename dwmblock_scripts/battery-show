@@ -1,0 +1,12 @@
+#!/bin/bash
+icons="/usr/share/icons/Arc/panel/22"
+base="/sys/class/power_supply/BAT0"
+cap="$(cat $base/capacity)"
+if [[ "$(cat $base/status)" = "Discharging" ]]; then
+	# pkill picom
+	[[ "${cap}" -lt "11" ]] && systemctl suspend -i
+	[[ "${cap}" -lt "15" ]] && notify-send -i "${icons}/battery-low.svg" "Low Battery" "Suspending Soon"
+	echo "🔋 $cap%"
+else
+	echo "🔥 $cap%"
+fi

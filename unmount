@@ -1,0 +1,31 @@
+#!/bin/bash
+unmounter()
+{
+        while read -r var; do
+                if [[ "$var" == */android/* ]]; then 
+                        if fusermount -u "$var"; then 
+                                notify-send "Unmounted $var"
+                                rm -rf "$var"
+                        else
+                                notify-send "Failed to unmount $var"
+                        fi
+                else 
+                        if udevil unmount "$var"; then
+                                notify-send "Unmounted $var"
+                        else
+                                notify-send "Failed to unmount $var"
+                        fi
+                fi
+        done
+
+}
+
+df="df --output=target"
+mtpfs_mpoint='/android'
+usb_mpoint='/media'
+
+if $df | grep -e "$mtpfs_mpoint" -e "$usb_mpoint";then 
+        $df | grep -e "$mtpfs_mpoint" -e  "$usb_mpoint" | dmenu -f --font "BlexMono Nerd Font-14" -i -l 10 | unmounter
+else
+        notify-send 'Nothing to unmount'
+fi

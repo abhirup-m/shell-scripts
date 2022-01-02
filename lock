@@ -1,0 +1,4 @@
+#!/bin/bash
+
+i3lock -F -i "$(cat $HOME/.cache/wallpaper)" -n -k --time-size=50 --date-size=40 --time-font='BlexMono Nerd Font' --date-font='BlexMono Nerd Font' --time-pos=960:300 --date-pos=960:400
+# i3lock -c 00000000 -n -k --time-size=50 --date-size=40 --time-font='BlexMono Nerd Font' --date-font='BlexMono Nerd Font' --time-pos=960:100 --date-pos=960:200

@@ -1,0 +1,5 @@
+#!/bin/bash
+if [[ "$(mocp -Q %state | grep PLAY)" ]]; then
+	echo -e "🥁 $(basename "$(mocp -Q %file)" .mp3 | head -c 40)"
+fi
+

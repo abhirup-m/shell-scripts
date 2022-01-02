@@ -1,0 +1,13 @@
+#!/bin/bash
+
+file1=$(mktemp)
+file2=$(mktemp)
+for file in "$@"; do echo -e "$(basename "$file")" >> "$file1"; done
+[ $# = 0 ] && exit
+cp "$file1" "$file2"
+vim "$file2"
+[ "$(wc -l < "$file1")" = "$(wc -l < "$file2")" ] && paste -d">" "$file1" "$file2"
+read -rp "All right?"
+while IFS= read -r orig && IFS= read -r mod <&3; do
+    mv "$orig" "$mod"
+done <"$file1" 3<"$file2"

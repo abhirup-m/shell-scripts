@@ -1,0 +1,26 @@
+#!/bin/bash
+flag="false"
+file="$HOME/.cache/songlist"
+if [ $# = 0 ]; then
+        builtin cd "$HOME/storage/music" || exit 
+	[ -f "$file" ] || /usr/bin/ls > "$file"
+        IFS=$'\n'
+        for song in $(/usr/bin/cat "$file" | dmenu -i -f --font "BlexMono Nerd Font-14" -l 10); do
+                mocp -S 2> /dev/null
+                mocp -q "$song" 2> /dev/null && flag="true"
+        done
+else
+        mocp -S 2> /dev/null
+        IFS=$'\n'
+        for f in $@; do
+		mocp -q "$f" 2> /dev/null && flag="true"
+	done
+fi
+if [ "$flag" = "true" ] && ! [ $1 = '-n' ]; then
+        if mocp -i | grep 'State: STOP' 2> /dev/null; then
+                mocp -p 2> /dev/null
+        else
+                mocp --next 2> /dev/null
+        fi
+fi
+builtin cd "$HOME/storage/music" && /usr/bin/ls > "$file"

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+choice="$1"
+shift
+files=$(echo "$@" | xargs)
+case "$choice" in
+	"-c") 	notify-send "$files"
+		if arch=$(echo | dmenu); then
+			command="apack $arch $files"
+			eval "$command"
+		fi
+		;;
+	"-e")	aunpack "$files"
+		;;
+esac

@@ -1,0 +1,26 @@
+#!/bin/bash
+#read -r file
+id=99999
+file="$1"
+case "$file" in
+        *.tex)  dunstctl close-all
+		base=$(echo "${file}" | awk -F'\\.tex' '{print $1}')
+		err=$(rubber -dqs --inplace --synctex "$file" 2>&1 > /dev/null)
+                if [ -n "$err" ]; then
+			/usr/bin/dunstify -r $id -u critical -t 0 "$err"
+                elif [ "$(pgrep -a zathura | grep -c "$base.pdf")" = 0 ]; then
+                        zathura  "$base.pdf" &
+                fi
+                ;;
+        *.py)   st -n floatterm bash -ic "python $@; read";;
+        *.sh)   st bash -c "$file";;
+        *.md)   base=$(echo "${file}" | awk -F'\\.md' '{print $1}')
+		errors=$(pandoc -t latex -o "$base.pdf" "$file" 2>&1 > /dev/null)
+                if [ -n "$errors" ]; then
+			/usr/bin/dunstify -r $id -t 0 "$errors"
+                elif [ "$(pgrep -a zathura | grep -c "$base.pdf")" = 0 ]; then
+                        zathura "$base.pdf" &> "$HOME/.cache/zathuralog"
+                fi
+                ;;
+        *)      notify-send "No compiler specified"
+esac

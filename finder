@@ -1,0 +1,15 @@
+#!/bin/bash
+
+regen()
+{
+	/usr/bin/find "$1" -type f ! -path "$HOME/anaconda3/*" ! -path "$HOME/.config/coc/*" ! -path "$HOME/scripts/*" ! -path "$HOME/.local/share/*" ! -path "$HOME/.local/lib/*" ! -path "$HOME/.config/libreoffice/*" ! -path "$HOME/.local/include/*" ! -path "$HOME/.local/state/*" ! -path "*.part" ! -path "*/.git/*" ! -path "*.mp3" ! -path "*.mp4" ! -path "*.mkv" ! -path "*.pdf" ! -path "*.djvu" ! -path "*.png" ! -path "*.jpg" ! -path "*.webm" ! -path "*.iso" ! -path "*.svg" ! -path "*.xbm" ! -path "$HOME/storage/Mail/*" ! -path "*/home/kirito/.local/share/Trash/*" ! -path "*/.mozilla/*" ! -path "*/.cache/*" ! -path "*/.config/google-chrome*" ! -path "*/watch_later/*" ! -path "*/.vim/plugged/*" ! -path "*/.vim/undo/*" 2> /dev/null
+}
+
+[ -n "$1" ] && builtin cd "$1" || exit
+dir=$(pwd)
+if [ "$dir" = "$HOME" ]; then
+	/usr/bin/cat ~/.cache/finderlist || regen "$dir"
+	regen "$dir" &> ~/.cache/finderlist &
+else 	
+	regen "$dir"
+fi

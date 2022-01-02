@@ -1,0 +1,4 @@
+#!/bin/bash
+msg="$(for file in $(find ~/storage/Mail/Inbox/new/* ! -path . -mmin -2); do grep -E -- 'Subject: |From: ' $file; echo -e "----"; done)"
+! [[ -z "${msg}" ]] && notify-send -t 5000 "Mail Sync" "$(echo -e "${msg}")"
+echo -e "   $(find ~/storage/Mail/Inbox/new/* ! -path . -mmin -2 | wc -l)"

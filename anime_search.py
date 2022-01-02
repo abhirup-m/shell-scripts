@@ -1,0 +1,48 @@
+#!/bin/python
+import sys
+import time
+import tempfile
+import requests as rq
+from bs4 import BeautifulSoup as bs
+from pathlib import Path
+import os
+import multiprocessing
+from pySmartDL import SmartDL
+import subprocess
+
+def search(name,cat):
+    page = rq.get("https://myanimelist.net/manga.php?q={}&cat={}".format(name,cat))
+    soup = bs(page.content,features="lxml")
+    for title in soup.findAll('strong')[0:10]:
+        link = title.findPrevious('a')['href']
+        typ = title.findNext('td', {"class": "borderClass ac bgColor0"})
+        epi = typ.findNext('td', {"class": "borderClass ac bgColor0"})
+        score = epi.findNext('td', {"class": "borderClass ac bgColor0"})
+        print (title.text.strip())
+        print (epi.text.strip(),"\t",score.text.strip(),"\t",typ.text.strip(),"\t",link.strip())
+        print ()
+
+
+n = len(sys.argv)
+cat = ""
+if n == 1:
+    print ("Enter name of anime.")
+    quit()
+elif n == 2:
+    name = sys.argv[1]
+elif n == 3:
+    name = sys.argv[1]
+    cat = sys.argv[2]
+    if cat == "anime" or cat == "an":
+        cat = "anime"
+    elif cat == "manga" or cat == "ma":
+        cat = "manga"
+    elif cat == "all" or cat == "al":
+        cat = "all"
+    else:
+        print ("Invalid category")
+        quit()
+else:
+    quit()
+
+search(name,cat)

@@ -1,0 +1,43 @@
+#!/bin/bash
+
+case $(file --mime-type "$1" -b) in
+       video/*) ch=$(echo -e "1. ffplay -noborder -loglevel quiet" | fzf)
+       		case $ch in
+		1.*) ffplay -noborder -loglevel quiet "$1" >/dev/null & disown;;
+		*) ;;
+		esac;;
+    *pdf|*djvu) ch=$(echo -e "0. zathura\n1. evince\n2. $BROWSER\n3. rotate cw\n4. rotate acw\n5. pdfcrop" | fzf)
+       		case "$ch" in
+		0.*) zathura "$1" >/dev/null & disown;;
+		1.*) evince "$1" &>/dev/null & disown;;
+		2.*) "$BROWSER" "$1" >/dev/null & disown;;
+		3.*) pdfjam --batch --suffix rot_cw --angle 270 --fitpaper true --rotateoversize true "$1";; 
+		4.*) pdfjam --batch --suffix rot_acw --angle 90 --fitpaper true --rotateoversize true "$1";; 			
+		5.*) for f in "$@"; do notify-send "$f"; done;;
+		*) notify-send "Hi";;
+		esac;;
+*opendocument*) ch=$(echo -e "1. LibreOffice-still --convert-to pdf" | fzf)
+       		case "$ch" in
+		1.*) LibreOffice-still --convert-to pdf "$1" && notify-send "Converted to pdf";;
+		*) ;;
+		esac;;
+       image/*) ch=$(echo -e "1. gthumb\n2. Set as wallpaper\n3. Inkscape" | fzf)
+       		case $ch in
+		1.*) gthumb "$1" &>/dev/null & disown;;
+		2.*) change_wall "$1" &>/dev/null & disown;;
+		3.*) inkscape "$1" &>/dev/null & disown;;
+		*) ;;
+		esac;;	       
+	*/html) $BROWSER "$1" &> /dev/null & disown;;
+	     *) FILE=$1
+		case "${FILE#*.}" in
+			7z|ace|ar|arc|bz2?|cab|cpio|cpt|deb|dgc|dmg|gz|tar.xz|tar.gz|tar.bz2) ch=$(echo -e "1. atool --extract --each" | fzf)
+			case "$ch" in
+			1.*) atool --extract --each "$1";;
+			*) ;;
+			esac;;
+			ipynb) jupyter-lab "$1" &> /dev/null & disown;;
+			*) ;;
+			esac;;
+esac
+

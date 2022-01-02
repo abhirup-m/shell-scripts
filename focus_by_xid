@@ -1,0 +1,4 @@
+#!/bin/bash
+
+xid=$(wmctrl -lp | grep $1 | cut -d ' ' -f1)
+wmctrl -ia $xid

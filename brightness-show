@@ -1,0 +1,15 @@
+#!/bin/bash
+progress_new()
+{
+	if [[ "$1" == "100" ]]; then
+		status_pre=" 100% |$(seq 20 | xargs -n1 -I{} echo -n '-')"
+	else
+		pre=$(( $1/5 ))
+		status_pre=" $1% |$(seq ${pre} | xargs -n1 -I{} echo -n '-')"
+	fi
+	echo -e "${status_pre}"
+}
+
+max=937
+msgid=29979
+dunstify -i "/usr/share/icons/Arc/status/symbolic/display-brightness-symbolic.svg" -t 1000 -r ${msgid} "$(progress_new $(( $(light -Gr)*100/max )))"

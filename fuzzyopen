@@ -1,0 +1,16 @@
+choice=$(/usr/bin/ls -A | fzf)
+[ -z "$choice" ] && exit
+if [ "$(echo "$choice" | wc -l)" == "1" ]; then
+	lf -remote "send $id select \"$choice\""
+	if [ "$#" = 1 ]; then
+		[[ -d "$choice" ]] && lf -remote "send $id open"
+		[[ -f "$choice" ]] && opener "$choice"
+	fi
+else
+	IFS=$'\n'
+	for file in $choice; do
+		sel="$file"
+		lf -remote "send $id toggle \"$file\""
+	done
+	lf -remote "send $id select \"$sel\""
+fi

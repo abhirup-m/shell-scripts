@@ -1,0 +1,14 @@
+#!/bin/bash
+if [ $# -eq 0 ]; then
+    if ! wmctrl -a 'VIM_SERVER'; then
+	    currentfile="$(cat $XDG_CACHE_HOME/vim_current_file)"
+	st -c 'editor' -e vim --servername 'VIM_SERVER' -c :e "$currentfile" &
+    fi
+else 
+    if wmctrl -a 'VIM_SERVER'; then
+	#for file in "$@"; do vim --servername 'VIM_SERVER' --remote-send "<Esc>:tab drop $file<CR>" & done
+	vim --servername 'VIM_SERVER' --remote-tab "$@"
+    else
+	st -c 'editor' -e vim  --servername 'VIM_SERVER' --remote-tab-silent "$@" &
+    fi
+fi

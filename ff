@@ -1,0 +1,133 @@
+#!/bin/bash
+
+get_time()
+{
+	time="$1"
+	until [ $(echo $time | tr -cd ":" | wc -c) = 2 ]; do
+		time="00:$time"
+	done
+}
+
+output_name()
+{
+	file="$1"
+	base=""${file%.*}""
+	ext="${file##*.}"
+	suffix="$2"
+	[[ "$#" == 3 ]] && ext="$3"
+	outname="$base-$suffix.$ext"
+	count=1
+	until ! [[ -f "$outname" ]]; do
+		outname="$base-$suffix-$count.$ext"
+		count=$(( count+1 ))
+	done
+	echo "$outname"
+}
+
+file="$1"
+case "$2" in
+	"-trim") 		ch="1";;
+	"-conv") 		ch="2";;
+	"-to-aud") 		ch="3";;
+	"-inc-vol") 		ch="4";;
+	"-rem-aud") 		ch="5";;
+	"-add-aud") 		ch="6";;
+	"-record") 		ch="7";;
+	"-vid-gif") 		ch="8";;
+	"-compress") 		ch="9";;
+	"-merge-parts") 	ch="10";;
+	"-join-vids")  		ch="11";;
+	"-divide")   		ch="12";;
+	"-add-img-to-aud")   	ch="13";;
+esac
+# else
+# 	ch=$(echo -e	"\
+# 		1 - Cut media\n\
+# 		2 - Convert media\n\
+# 		3 - Convert to audio\n\
+# 		4 - Increase audio volume \n\
+# 		5 - Remove audio from video\n\
+# 		6 - Superimpose audio with video\n\
+# 		7 - Record video from screen without audio\n\
+# 		8 - Create animated gif from video\n\
+# 		9 - Compress video\n\
+# 		10 - Cut parts of video and merge them\n\
+# 		11 - Join multiple videos\n\
+# 		12 - Divide video into chunks of given time\n\
+# 		13 - Overlay audio with images\n" \
+# 		| fzf | awk '{print $1'})
+# 	[[ "$ch" = '' ]] && exit
+# fi
+echo "$ch"
+case $ch in
+	"1") 	read -p "Enter start time:" st
+		[ $(echo $time | tr -cd ":" | wc -c) = 1 ] && st="00:$st"
+		read -p "Enter end time:" comm
+		read -p "Enter output format:" outf
+		total="ffmpeg -i \"$file\" -ss "$st" -to "$comm" -c copy $(output_name $file $outf)"
+		;;
+	"2")	read -p "Enter output format:" outf
+		total="ffmpeg -i \"$file\" -c copy $(output_name $outf)"
+		;;
+	"3")	read -p "Enter output format:" outf
+		total="ffmpeg -i \"$file\" $(output_name $outf)"
+		;;
+	"4")	read -p "Enter volume in dB:" vol
+		vol="$vol"
+		total="ffmpeg -i \"$file\"  -af "volume=${vol}dB" -c:v copy -c:a aac -b:a 192k $(output_name ${file##*.})"
+		;;
+	"5")	total="ffmpeg -i \"$file\" -c copy -an $(output_name ${file##*.})"
+		;;
+	"6")	read -p "Enter path of audio file:" audiof
+		interim_file="$(mktemp --suffix '.'${file##*.})"
+		total="ffmpeg -i \"$file\" -c copy -an "${interim_file}" && ffmpeg -i "${interim_file}" -i "$audiof" -shortest -c:v copy -c:a aac $(output_name ${file##*.})"
+		;;
+	"7")	total="ffmpeg -video_size 1920x1080 -framerate 30 -f x11grab -i :0.0+0,0 $(output_name 'mkv')"
+		;;
+	"8")	read -p "Enter start time:" st
+		[ $(echo $time | tr -cd ":" | wc -c) = 1 ] && st="00:$st"
+		read -p "Enter end time:" et
+		if [ $(echo $et | tr -cd ":" | wc -c) = 0 ]; then
+			comm="-t $et"
+		else 
+			[ $(echo $et | tr -cd ":" | wc -c) = 1 ] && et="00:$et"
+			comm="-to $et"
+		fi
+		total="ffmpeg -ss $st "$comm" -i \"$file\" -vf \"fps=10,scale=640:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse\" -loop 10 $(output_name 'gif')"
+		;;
+	"9")	total="ffmpeg -i \"$file\" -vcodec libx265 -crf 28 -preset veryfast $(get_outname \"$file\" 'compressed')"
+		;;
+	"10")	read -p "Enter duration details file: " dfile
+		echo "$dfile"
+		echo "hi"
+		allfile="$(mktemp)"
+		while read line; do
+			echo "$line"
+			st=$(echo $line | awk '{print $1}')
+			et=$(echo $line | awk '{print $2}')
+			interim_file="$(mktemp --suffix '.'${file##*.})"
+			echo "start"
+			ffmpeg -y -i \"$file\" -ss "$st" -to "$et" -c copy "$interim_file" &
+			echo "file	$interim_file" >> "$allfile"
+		done < "$dfile"
+		wait
+		total="ffmpeg -f concat -safe 0 -i \"$allfile\" -c copy $(output_name ${file##*.})"
+		;;
+	"12")	read -p "Enter chunk duration (in seconds): " chunk
+		dur=$(ffprobe -i "$file" -show_entries format=duration -v quiet -of csv="p=0" | cut -d '.' -f1)
+		start=0
+		counter=1
+		while [[ $start -lt $dur ]]; do
+			ffmpeg -i "$file" -ss $start -t $chunk "$file"_segment_"$counter".mp4
+			start=$((start+chunk))
+			counter=$((counter+1))
+		done
+		;;
+	"13")	fpath="$3"
+		outname="$4"
+		ffmpeg -f concat -i "$fpath" -i "$file" -c:v libx264 -r 1 -pix_fmt yuv420p -c:a aac -strict experimental -shortest "$outname"
+		exit
+		;;
+esac
+read -p "$total"
+eval "$total"

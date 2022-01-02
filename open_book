@@ -1,0 +1,7 @@
+#!/bin/bash
+if [[ "$#" == 0 ]]; then
+	file=$(find ~ -type f ! -path "$HOME/anaconda3/*" ! -path "*/Trash/*" -iname "*.pdf" -o -iname "*.djvu" | dmenu -i -f --font "BlexMono Nerd Font-14" -l 10)
+	[ -f "$file" ] && evince "$file" & disown
+else
+	evince "$@" & disown
+fi

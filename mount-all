@@ -1,0 +1,22 @@
+#!/bin/bash
+if [[ "$((lsblk  -lnp -o NAME,SIZE,MOUNTPOINT | awk '$1~/sd[b-z].*[[:digit:]]/ && $3==""'; /usr/bin/simple-mtpfs -l) | wc -l)" = "0" ]]; then
+	notify-send "Mount" "Nothing to mount"
+	exit
+elif [[ "$((lsblk  -lnp -o NAME,SIZE,MOUNTPOINT | awk '$1~/sd[b-z].*[[:digit:]]/ && $3==""'; /usr/bin/simple-mtpfs -l) | wc -l)" = "1" ]]; then
+	(lsblk  -lnp -o NAME,MOUNTPOINT | awk '$1~/sd[b-z].*[[:digit:]]/ && $3==""' | awk '{print $1}'; /usr/bin/simple-mtpfs -l) > /home/kirito/.cache/mount
+else
+    lsblk  -lnp -o NAME,SIZE,MOUNTPOINT | awk '$1~/sd[b-z].*[[:digit:]]/ && $3==""' | dmenu | awk '{print $1}' >> /home/kirito/.cache/mount
+    /usr/bin/simple-mtpfs -l >> /home/kirito/.cache/mount
+fi
+while read item; do
+	[[ -z "${item}" ]] && exit
+	if [[ ""${item}"" =~ /dev/sd[b-z][1-9] ]]; then
+		/usr/bin/udevil mount "${item}" && notify-send "${item}" "Successfully Mounted"
+	else
+		mkdir -p android
+        mkdir -p "/home/kirito/android/${item}"
+        /usr/bin/simple-mtpfs --device "${item}" "/home/kirito/android/${item}" && notify-send "${item}" "Successfully Mounted" || rm -rf "/home/kirito/android/${item}"
+    fi
+done <<<"$(cat /home/kirito/.cache/mount)" 
+rm -f /home/kirito/.cache/mount
+

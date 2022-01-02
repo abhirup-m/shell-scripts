@@ -1,0 +1,175 @@
+#!/bin/bash
+
+handle_dir()
+{
+	files=()
+	for f in "${args[@]}"; do
+		if [[ -d "$f" ]]; then
+			files+=("$f")
+			unset 'args[$count]'
+		fi
+	done
+	if [[ ${#files[@]} = 1 ]]; then 
+		st -c floatterm bash -c "lf $f" &
+	elif [[ ${#files[@]} -gt 1 ]]; then 
+		lf -remote "send select $files"
+	fi
+	[[ ${#args[@]} = 0 ]] && exit
+}
+
+handle_docview()
+{
+	files=()
+	for f in "${args[@]}"; do
+		if [[ $(file --mime-type "$f" -b) = *pdf ]] || [[ $(file --mime-type "$f" -b) = *djvu ]]; then
+			files+=("$f")
+			unset 'args[$count]'
+		fi
+	done
+	[[ ${#files[@]} -gt 0 ]] && open_book "${files[@]}" &>/dev/null & disown
+	[[ ${#args[@]} = 0 ]] && exit
+}
+
+handle_video()
+{
+	files=()
+	for f in "${args[@]}"; do
+		if [[ $(file --mime-type "$f" -b) = video/* ]]; then
+			files+=("$f")
+			unset 'args[$count]'
+		fi
+	done
+	[[ ${#files[@]} -gt 0 ]] && mpv --volume=130 --osd-blur=10 --no-terminal --player-operation-mode=pseudo-gui --fs --no-osd-bar --save-position-on-quit "${files[@]}" &>/dev/null & disown
+	[[ ${#args[@]} = 0 ]] && exit
+}
+
+handle_svg()
+{
+	files=()
+	for f in "${args[@]}"; do
+		if [[ $(file --mime-type "$f" -b) = *pdf || $(file --mime-type "$f" -b) = *djvu ]]; then
+			files+=("$f")
+			unset 'args[$count]'
+		fi
+	done
+	[[ ${#files[@]} -gt 0 ]] && inkview "${files[@]}" &>/dev/null & disown
+	[[ ${#args[@]} = 0 ]] && exit
+}
+
+handle_image()
+{
+	files=()
+	for f in "${args[@]}"; do
+		if [[ $(file --mime-type "$f" -b) = image/* ]]; then
+			files+=("$f")
+			unset 'args[$count]'
+		fi
+	done
+	#[[ ${#files[@]} -gt 0 ]] && feh -Tdefault --start-at "${files[@]}" &>/dev/null & disown
+	# [[ ${#files[@]} -gt 0 ]] && gthumb "${files[@]}" &>/dev/null & disown
+	[[ ${#files[@]} -gt 0 ]] && pqiv "${files[@]}" &>/dev/null & disown
+	[[ ${#args[@]} = 0 ]] && exit
+}
+
+handle_music()
+{
+	files=()
+	for f in "${args[@]}"; do
+		if [[ $(file --mime-type "$f" -b) = audio/* ]]; then
+			files+=("$f")
+			unset 'args[$count]'
+		fi
+	done
+	[[ ${#files[@]} -gt 0 ]] && song-select "${files[@]}"  &> /dev/null & disown
+	[[ ${#args[@]} = 0 ]] && exit
+}
+
+handle_archive()
+{
+	files=()
+	for f in "${args[@]}"; do
+		case "$f" in
+		*.iso|*.jar|*.msi|*.pkg|*.rar|*.shar|*.tar|*.tgz|*.xar|*.xpi|*.xz|*.zip|*.7z|*.ace|*.ar|*.arc|*.bz2?|*.cab|*.cpio|*.cpt|*.deb|*.dgc|*.dmg|*.gz|*.tar.xz|*.tar.gz|*.tar.bz2) 
+			echo "Extract $f?" | dmenu
+			[ "$?" = 0 ] && atool --extract --each "$f" & disown
+			files+=("$f")
+			unset 'args[$count]'
+			count=$(( count + 1 ));;
+		esac
+	done
+	[[ ${#args[@]} = 0 ]] && exit
+}
+
+handle_office()
+{
+	files=()
+	for f in "${args[@]}"; do
+		case "${f#*.}" in
+		pptx?|od[dfgpst]|docx?|sxc|xlsx?|xlt|xlw|gnm|gnumeric) files+=("$f"); unset 'args[$count]'; count=$(( count + 1 ));;
+		esac
+	done
+	[[ ${#files[@]} -gt 0 ]] && libreoffice7.1 "${files[@]}"  &>/dev/null & disown
+	[[ ${#args[@]} = 0 ]] && exit
+}
+
+handle_url()
+{
+	regex='(https?|ftp|file)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]'
+	files=()
+	for f in "${args[@]}"; do
+		if [[ "$f" =~ $regex ]]; then
+			echo "$f" | xclip -i -selection clipboard && pkill -SIGRTMIN+12 dwmblocks
+			unset 'args[$count]'
+		fi
+	done
+	[[ ${#args[@]} = 0 ]] && exit
+
+}
+
+handle_torrent()
+{
+	files=()
+	for f in "${args[@]}"; do
+		if [[ $f == magnet:* ]]; then
+			files+=("$f")
+			unset 'args[$count]'
+		fi
+	done
+	[[ ${#files[@]} -gt 0 ]] && /usr/bin/transmission-gtk "${files[@]}"  &>/dev/null & disown
+	[[ ${#args[@]} = 0 ]] && exit
+}
+
+handle_ipynb()
+{
+	files=()
+	for f in "${args[@]}"; do
+		case "${f#*.}" in
+		ipynb) files+=("$f"); unset 'args[$count]'; count=$(( count + 1 ));;
+		esac
+	done
+	[[ ${#files[@]} -gt 0 ]] &&  jupyter-lab "${files[@]}"  &>/dev/null & disown
+	[[ ${#args[@]} = 0 ]] && exit
+}
+
+handle_other()
+{
+	vimmer "${args[@]}"
+}
+
+
+args=("$@")
+if [[ "${#args[@]}" -gt 0 ]]; then
+	handle_dir
+	handle_docview
+	handle_svg
+	handle_image
+	handle_office
+	handle_music
+	handle_svg
+	handle_video
+	handle_torrent
+	handle_url
+	handle_archive
+	handle_ipynb
+	handle_other
+fi
