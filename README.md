@@ -2,76 +2,72 @@
 
 These are some bash scripts that I use on a daily basis on my Arch+dwm setup. Most are *not* posix-compliant. The individual scripts are listed below.
 
-- [**alt-open**](alt-open):
+- [**alt-open**](alt-open): File opener with alternate applications. I call this from the lf file manager using a hotkey
 
-- [**anime_search.py**](anime_search.py):
+- [**anime_search.py**](anime_search.py): Python script for fetching information about anime from MyAnimeList
 
-- [**archiver**](archiver):
+- [**archiver**](archiver): Packs and unpacks archives from the command line using atool
 
-- [**brightness-show**](brightness-show):
+- [**brightness-show**](brightness-show): Displays current brightness using notification daemon
 
-- [**bulk-rename**](bulk-rename):
+- [**bulk-rename**](bulk-rename): Accepts list of files, opens vim buffer with list where you can edit the names, and on closing renames the files to the changed names
 
-- [**change_wall**](change_wall):
+- [**change_wall**](change_wall): Chooses image randomly from folder and sets it as wallpaper using xwallpaper
 
-- [**compile**](compile):
+- [**compile**](compile): General script to compile files of certain extensions using predefined compilers
 
-- [**current_window_name**](current_window_name):
+- [**current_window_name**](current_window_name): Returns name of active window
 
-- [**dwm_reload**](dwm_reload):
+- [**dwm_reload**](dwm_reload): Makes, installs and restarts DWM by killing the current DWM process, and brings up terminal with errors if they occur
 
-- [**dwmblock_scripts**](dwmblock_scripts):
+- [**dwmblock_scripts/battery-show**](dwmblock_scripts/battery-show): Outputs current battery percentage with icon, suspends if battery is below a certain percentage
 
-- [**dwmblock_scripts/battery-show**](dwmblock_scripts/battery-show):
+- [**dwmblock_scripts/datetime-show**](dwmblock_scripts/datetime-show): Outputs date and time
 
-- [**dwmblock_scripts/datetime-show**](dwmblock_scripts/datetime-show):
+- [**dwmblock_scripts/mail-show**](dwmblock_scripts/mail-show): Outputs mail status
 
-- [**dwmblock_scripts/mail-show**](dwmblock_scripts/mail-show):
+- [**dwmblock_scripts/music-show**](dwmblock_scripts/music-show): Outputs name of song being played currently in mocp
 
-- [**dwmblock_scripts/music-show**](dwmblock_scripts/music-show):
+- [**dwmblock_scripts/volume-show**](dwmblock_scripts/volume-show): Outputs volume 
 
-- [**dwmblock_scripts/volume-show**](dwmblock_scripts/volume-show):
+- [**dwmblock_scripts/wifi-show**](dwmblock_scripts/wifi-show): Outputs SSID of the active connection
 
-- [**dwmblock_scripts/wifi-show**](dwmblock_scripts/wifi-show):
+- [**ff**](ff): Ffmpeg script for doing lots of stuff like cutting media, converting media, etc
 
-- [**ff**](ff):
+- [**fileman**](fileman): Opens file manager from multiple alternatives
 
-- [**fileman**](fileman):
+- [**finder**](finder): Lists all text files under given directory and subdirectories, potentially useful for piping into Dmenu
 
-- [**finder**](finder):
+- [**focus_by_xid**](focus_by_xid): Lists xid of open windows in Dmenu and switches to selected xid
 
-- [**focus_by_xid**](focus_by_xid):
+- [**fuzzyopen**](fuzzyopen): Fuzzy-selects file in lf file manager and opens it
 
-- [**fuzzyopen**](fuzzyopen):
+- [**killwin**](killwin): Kills current window, saves all buffers if window is vim
 
-- [**killwin**](killwin):
+- [**lfrun**](lfrun): Special script for running lf with ueberzug for image preview
 
-- [**lfrun**](lfrun):
+- [**lock**](lock): Locks screen with i3lock and image
 
-- [**lock**](lock):
+- [**mount-all**](mount-all): Lists available usb and other removable drives in Dmenu, and mounts the selected drive
 
-- [**mount-all**](mount-all):
+- [**mount_and_open**](mount_and_open): Opens the mounted drive in file manager, for use in devmon
 
-- [**mount_and_open**](mount_and_open):
+- [**musicstart**](musicstart): Starts mocp server in music directory
 
-- [**musicstart**](musicstart):
+- [**network**](network): Lists connections for selecting a particular to connect
 
-- [**network**](network):
+- [**open_book**](open_book): Outputs list of books into dmenu and opens selected one with evince
 
-- [**open_book**](open_book):
+- [**opener**](opener): Global file opener, xdg-open replacement
 
-- [**opener**](opener):
+- [**song-select**](song-select): Lists songs from directory into dmenu and plays selected song in mocp
 
-- [**song-select**](song-select):
+- [**unmount**](unmount): Lists mounted removable drives and unmounted selected ones
 
-- [**unmount**](unmount):
+- [**vimmer**](vimmer): Opens given file in vim with predefined servername, starts server if not already running
 
-- [**vimmer**](vimmer):
+- [**volume**](volume): Shows volume in notification daemon
 
-- [**volume**](volume):
+- [**zathura_detach**](zathura_detach): De(at)taches zathura window to running tabbed window
 
-- [**xdg-open**](xdg-open):
-
-- [**zathura_detach**](zathura_detach):
-
-- [**zathura_tabbed**](zathura_tabbed):
+- [**zathura_tabbed**](zathura_tabbed): Starts zathura in tabbed
