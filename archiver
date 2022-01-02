@@ -12,4 +12,5 @@ case "$choice" in
 		;;
 	"-e")	aunpack "$files"
 		;;
+	*) 	echo -e "USAGE: compression: archiver -c <file>\nextract: archiver -e <file>\nEnter archive name (example.zip) in dmenu prompt.";;
 esac
