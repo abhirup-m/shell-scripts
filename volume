@@ -19,29 +19,31 @@ volume_show()
 		icon=${icons[$(( $vol/29 + 1))]}
 		dunstify  -t 1000 -r ${msgid} "$icon Volume $(( $vol*100/87 ))%"
 	fi
+	echo $icon $(( $vol*100/87 ))
 }
 
+volume_show
 
-vol=$(amixer get Master | tail -n 1 | awk '{print $3}') 
-case $1 in
-	'-i') 	if [ $vol = '87' ]; then
-			volume_show $vol
-			exit
-		fi
-		amixer set Master unmute
-		amixer set Master $2db+
-		volume_show
-		;;
-	'-d') 	if [ $vol = '0' ]; then
-			volume_show $vol
-			exit
-		fi
-		amixer set Master unmute
-		amixer set Master $2db-
-		volume_show
-		;;
-	'-t')	amixer set Master toggle
-		volume_show > ~/testfile
-		;;
-	*) 	volume_show ;;
-esac
+# vol=$(amixer get Master | tail -n 1 | awk '{print $3}') 
+# case $1 in
+# 	'-i') 	if [ $vol = '87' ]; then
+# 			volume_show $vol
+# 			exit
+# 		fi
+# 		amixer set Master unmute
+# 		amixer set Master $2db+
+# 		volume_show
+# 		;;
+# 	'-d') 	if [ $vol = '0' ]; then
+# 			volume_show $vol
+# 			exit
+# 		fi
+# 		amixer set Master unmute
+# 		amixer set Master $2db-
+# 		volume_show
+# 		;;
+# 	'-t')	amixer set Master toggle
+# 		volume_show > ~/testfile
+# 		;;
+# 	*) 	volume_show ;;
+# esac
