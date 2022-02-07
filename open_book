@@ -1,7 +1,26 @@
 #!/bin/bash
-if [[ "$#" == 0 ]]; then
-	file=$(find ~ -type f ! -path "$HOME/anaconda3/*" ! -path "*/Trash/*" -iname "*.pdf" -o -iname "*.djvu" | dmenu -i -f --font "BlexMono Nerd Font-14" -l 10)
+
+open()
+{
+	file=$(cat $files | dmenu -i -f --font "BlexMono Nerd Font-14" -l 10) 
 	[ -f "$file" ] && evince "$file" & disown
+
+}
+
+regen()
+{
+	find ~ -type f ! -path "$HOME/.cache/*" ! -path "$HOME/*conda*" ! -path "*/Trash/*" -iname "*.pdf" -o -iname "*.djvu" > "$files"
+}
+
+files="$XDG_CACHE_HOME/booklist"
+if [[ "$#" == 0 ]]; then
+	if [ -s "$files" ]; then
+		open
+		regen
+	else
+		regen
+		open & disown
+	fi
 else
 	evince "$@" & disown
 fi

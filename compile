@@ -15,7 +15,7 @@ case "$file" in
         *.py)   st -n floatterm bash -ic "python $@; read";;
         *.sh)   st bash -c "$file";;
         *.md)   base=$(echo "${file}" | awk -F'\\.md' '{print $1}')
-		errors=$(pandoc -t latex -o "$base.pdf" "$file" 2>&1 > /dev/null)
+		errors=$(pandoc --pdf-engine=xelatex -o "$base.pdf" "$file" 2>&1 > /dev/null)
                 if [ -n "$errors" ]; then
 			/usr/bin/dunstify -r $id -t 0 "$errors"
                 elif [ "$(pgrep -a zathura | grep -c "$base.pdf")" = 0 ]; then

@@ -62,6 +62,8 @@ These are some bash scripts that I use on a daily basis on my Arch+dwm setup. Mo
 
 - [**song-select**](song-select): Lists songs from directory into dmenu and plays selected song in mocp
 
+- [**tex_filter_image**](tex_filter_image): Creates minimal images folder from only those images that are being used in the tex project
+
 - [**unmount**](unmount): Lists mounted removable drives and unmounted selected ones
 
 - [**vimmer**](vimmer): Opens given file in vim with predefined servername, starts server if not already running

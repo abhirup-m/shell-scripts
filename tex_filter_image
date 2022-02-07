@@ -1,0 +1,25 @@
+#!/bin/bash
+
+if [ $# == 1 ]; then
+	files="$1"
+elif [ $# == 0 ]; then
+	files="*.tex"
+else
+	echo "invalid number of arguments"
+	exit
+fi
+new_folder="./new_folder"
+mkdir -p "$new_folder"
+graphicspath=$(/usr/bin/grep graphicspath *.tex | cut -d '{' -f3 | cut -d '}' -f1)
+for file in $files; do
+	for line in $(/usr/bin/grep \includegraphics $file); do
+		if ! [  $(echo $line | head -c 1) == '%' ]; then
+			path=$(echo $line | cut -d '{' -f2 | cut -d '}' -f1)
+			filename="${path##*/}"
+			ext=$(echo "$filename" | cut -d '.' -f2)
+			path_noex=$(echo $path | awk -F ".$ext" '{print $1}')
+			mv -iv $path_noex.* "$new_folder/"
+			mv -iv $graphicspath$path_noex.* "$new_folder/"
+		fi
+	done
+done
