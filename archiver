@@ -5,7 +5,7 @@ shift
 files=$(echo "$@" | xargs)
 case "$choice" in
 	"-c") 	notify-send "$files"
-		if arch=$(echo | dmenu); then
+		if arch=$(echo | dmenu --font "FiraCode Nerd Font-14"); then
 			command="apack $arch $files"
 			eval "$command"
 		fi

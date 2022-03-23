@@ -2,7 +2,7 @@
 
 open()
 {
-	file=$(cat $files | dmenu -i -f --font "BlexMono Nerd Font-14" -l 10) 
+	file=$(cat $files | dmenu -i -f --font "FiraCode Nerd Font-14" -l 10) 
 	[ -f "$file" ] && evince "$file" & disown
 
 }

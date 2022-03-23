@@ -25,7 +25,7 @@ mtpfs_mpoint='/android'
 usb_mpoint='/media'
 
 if $df | grep -e "$mtpfs_mpoint" -e "$usb_mpoint";then 
-        $df | grep -e "$mtpfs_mpoint" -e  "$usb_mpoint" | dmenu -f --font "BlexMono Nerd Font-14" -i -l 10 | unmounter
+        $df | grep -e "$mtpfs_mpoint" -e  "$usb_mpoint" | dmenu -f --font "FiraCode Nerd Font-14" -i -l 10 | unmounter
 else
         notify-send 'Nothing to unmount'
 fi

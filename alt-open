@@ -10,7 +10,7 @@ case $(file --mime-type "$1" -b) in
        		case "$ch" in
 		0.*) zathura "$1" >/dev/null & disown;;
 		1.*) evince "$1" &>/dev/null & disown;;
-		2.*) "$BROWSER" "$1" >/dev/null & disown;;
+		2.*) "$BROWSER" "$1" &>/dev/null & disown;;
 		3.*) pdfjam --batch --suffix rot_cw --angle 270 --fitpaper true --rotateoversize true "$1";; 
 		4.*) pdfjam --batch --suffix rot_acw --angle 90 --fitpaper true --rotateoversize true "$1";; 			
 		5.*) for f in "$@"; do notify-send "$f"; done;;

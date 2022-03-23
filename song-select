@@ -5,7 +5,7 @@ if [ $# = 0 ]; then
         builtin cd "$HOME/storage/music" || exit 
 	[ -f "$file" ] || /usr/bin/ls > "$file"
         IFS=$'\n'
-        for song in $(/usr/bin/cat "$file" | dmenu -i -f --font "BlexMono Nerd Font-14" -l 10); do
+        for song in $(/usr/bin/cat "$file" | dmenu -i -f --font "FiraCode Nerd Font-14" -l 10); do
                 mocp -S 2> /dev/null
                 mocp -q "$song" 2> /dev/null && flag="true"
         done

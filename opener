@@ -90,7 +90,7 @@ handle_archive()
 	for f in "${args[@]}"; do
 		case "$f" in
 		*.iso|*.jar|*.msi|*.pkg|*.rar|*.shar|*.tar|*.tgz|*.xar|*.xpi|*.xz|*.zip|*.7z|*.ace|*.ar|*.arc|*.bz2?|*.cab|*.cpio|*.cpt|*.deb|*.dgc|*.dmg|*.gz|*.tar.xz|*.tar.gz|*.tar.bz2) 
-			echo "Extract $f?" | dmenu
+			echo "Extract $f?" | dmenu --font "FiraCode Nerd Font-14"
 			[ "$?" = 0 ] && atool --extract --each "$f" & disown
 			files+=("$f")
 			unset 'args[$count]'
