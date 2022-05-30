@@ -1,5 +1,5 @@
 #!/bin/bash
-choice=$((echo "nmcli radio wifi on"; echo "nmcli radio wifi off"; nmcli -t connection show | cut -d ':' -f1) | dmenu -i -f --font "FiraCode Nerd Font-14" -l 10 | head -n 1)
+choice=$((echo "nmcli radio wifi on"; echo "nmcli radio wifi off"; nmcli -t connection show | cut -d ':' -f1) | dmenu -i | head -n 1)
 [ -z "$choice" ] && exit
 if [ "$choice" == "nmcli radio wifi"* ]; then
         sh -c "$choice" 

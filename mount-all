@@ -5,7 +5,7 @@ if [[ "$((lsblk  -lnp -o NAME,SIZE,MOUNTPOINT | awk '$1~/sd[b-z].*[[:digit:]]/ &
 elif [[ "$((lsblk  -lnp -o NAME,SIZE,MOUNTPOINT | awk '$1~/sd[b-z].*[[:digit:]]/ && $3==""'; /usr/bin/simple-mtpfs -l) | wc -l)" = "1" ]]; then
 	(lsblk  -lnp -o NAME,MOUNTPOINT | awk '$1~/sd[b-z].*[[:digit:]]/ && $3==""' | awk '{print $1}'; /usr/bin/simple-mtpfs -l) > /home/kirito/.cache/mount
 else
-    lsblk  -lnp -o NAME,SIZE,MOUNTPOINT | awk '$1~/sd[b-z].*[[:digit:]]/ && $3==""' | dmenu --font "FiraCode Nerd Font-14"| awk '{print $1}' >> /home/kirito/.cache/mount
+    lsblk  -lnp -o NAME,SIZE,MOUNTPOINT | awk '$1~/sd[b-z].*[[:digit:]]/ && $3==""' | dmenu | awk '{print $1}' >> /home/kirito/.cache/mount
     /usr/bin/simple-mtpfs -l >> /home/kirito/.cache/mount
 fi
 while read item; do

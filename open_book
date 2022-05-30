@@ -2,7 +2,8 @@
 
 open()
 {
-	file=$(cat $files | dmenu -i -f --font "FiraCode Nerd Font-14" -l 10) 
+	file=$(cat $files | dmenu) 
+	echo "$file"
 	[ -f "$file" ] && evince "$file" & disown
 
 }
@@ -19,7 +20,7 @@ if [[ "$#" == 0 ]]; then
 		regen
 	else
 		regen
-		open & disown
+		open
 	fi
 else
 	evince "$@" & disown
