@@ -1,0 +1,4 @@
+if [ "$1" == "device_mounted" ]; then
+	mountPath=$(lsblk "$2" -o MOUNTPOINTS -n | xargs)
+	! [ -z "$mountPath" ] && vifm --server-name fileman --remote -c ":tabnew \"$mountPath\"" && wmctrl -xa fileman
+fi

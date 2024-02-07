@@ -3,14 +3,14 @@
 open()
 {
 	file=$(cat $files | dmenu) 
-	echo "$file"
 	[ -f "$file" ] && evince "$file" & disown
 
 }
 
 regen()
 {
-	find ~ -type f ! -path "$HOME/.cache/*" ! -path "$HOME/*conda*" ! -path "*/Trash/*" -iname "*.pdf" -o -iname "*.djvu" > "$files"
+	find ~/storage/books-and-papers -type f > "$files"
+	find ~/storage/research-projects -type f >> "$files"
 }
 
 files="$XDG_CACHE_HOME/booklist"

@@ -1,0 +1,5 @@
+#!/bin/bash
+info=$(echo "Enter username@host" | dmenu)
+sshfs "$info": ~/sshfs/
+opener ~/sshfs
+

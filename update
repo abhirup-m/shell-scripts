@@ -1,0 +1,10 @@
+#!/bin/bash
+
+yay -Pw
+sudo pacman -Syy gnupg archlinux-keyring --noconfirm
+sudo pacman-key --init
+sudo pacman-key --populate
+yay -Syu --noconfirm
+yay -Scc --noconfirm
+pip install --upgrade pip
+pip install --upgrade $(pip list | tail -n +3 | cut -d ' ' -f1 | xargs)

@@ -1,0 +1,96 @@
+#!/usr/bin/bash
+
+bgcolor="#1d2330"
+fgcolor="#dddddd"
+fontname="UbuntuMono Nerd Font Mono"
+fontstyle="regular"
+fontsize=17
+xoffset=30
+height=30
+
+Clock(){
+	TIME=$(date "+%H:%M")
+	echo -e -n "${TIME}" 
+}
+
+
+Cal() {
+	DATE=$(date "+%a, %b %m")
+	echo -e -n "${DATE}"
+}
+
+
+Workspaces(){
+	num_desktops=$(xdotool get_num_desktops)
+	active_desktop=$(($(xdotool get_desktop) + 1))
+	echo $active_desktop
+	for i in $(seq 1 ); do
+		if [ $i == "$active_desktop" ]; then
+			echo -n -e "%{B:$fgcolor}{F:$bgcolor} $i "
+		else
+			echo -n -e "%{F:$fgcolor}{B:$bgcolor} $i "
+		fi
+	done
+}
+
+
+ActiveWindow(){
+	echo -n "$(xdotool getactivewindow getwindowclassname)"
+	# len=$(echo -n "$(xdotool getwindowfocus getwindowclassname)" | wc -m)
+	# max_len=70
+	# if [ "$len" -gt "$max_len" ];then
+	# 	echo -n "$(xdotool getwindowfocus getwindowclassname | cut -c 1-$max_len)..."
+	# else
+	# 	echo -n "$(xdotool getwindowfocus getwindowclassname)"
+	# fi
+}
+
+Battery() {
+	BATTACPI=$(acpi --battery)
+	BATPERC=$(echo $BATTACPI | cut -d, -f2 | tr -d '[:space:]')
+
+	if [[ $BATTACPI == *"100%"* ]]
+	then
+		echo -e -n " $BATPERC"
+	elif [[ $BATTACPI == *"Discharging"* ]]
+	then
+		BATPERC=${BATPERC::-1}
+		echo -e " $BATPERC%"
+	elif [[ $BATTACPI == *"Charging"* && $BATTACPI != *"100%"* ]]
+	then
+		echo -e "$BATPERC(C)"
+	elif [[ $BATTACPI == *"Unknown"* ]]
+	then
+		echo -e "$BATPERC"
+	fi
+}
+
+# Wifi(){
+# 	WIFISTR=$( iwconfig wlp1s0 | grep "Link" | sed 's/ //g' | sed 's/LinkQuality=//g' | sed 's/\/.*//g')
+# 	if [ ! -z $WIFISTR ] ; then
+# 		WIFISTR=$(( ${WIFISTR} * 100 / 70))
+# 		ESSID=$(iwconfig wlp1s0 | grep ESSID | sed 's/ //g' | sed 's/.*://' | cut -d "\"" -f 2)
+# 		if [ $WIFISTR -ge 1 ] ; then
+# 			echo -e "\uf1eb ${ESSID} ${WIFISTR}%"
+# 		fi
+# 	fi
+# }
+
+Sound(){
+	NOTMUTED=$( amixer sget Master | grep "\[on\]" )
+	if [[ ! -z $NOTMUTED ]] ; then
+		VOL=$(awk -F"[][]" '/dB/ { print $2 }' <(amixer sget Master) | sed 's/%//g')
+		echo -e "${VOL}%"
+	else
+		echo -e "M"
+	fi
+}
+
+Run(){
+while true; do
+	echo -e "%{l}$(Workspaces) %{c}$(ActiveWindow)" "%{r} B:$(Battery)   V:$(Sound)   $(Clock) $(Cal)"
+	sleep 1s
+done
+}
+
+Run | lemonbar -p -F$fgcolor -B$bgcolor -f "$fontname:size=$fontsize:style=$fontstyle" -g x$height+$xoffset+

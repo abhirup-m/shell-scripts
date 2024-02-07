@@ -1,0 +1,1 @@
+/usr/bin/mpv --volume=130 --osd-blur=10 --no-terminal --player-operation-mode=pseudo-gui --fs --no-osd-bar --save-position-on-quit "$@" &

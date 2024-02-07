@@ -1,5 +1,5 @@
 #!/bin/bash
-music_dir="/home/kirito/storage/music"
+music_dir="/home/kirito/storage/music/anime"
 pgrep mocp || mocp -S
 if mocp -i | grep 'State: STOP'; then
         mocp -l "$music_dir"/*

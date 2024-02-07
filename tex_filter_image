@@ -8,13 +8,14 @@ else
 	echo "invalid number of arguments"
 	exit
 fi
-new_folder="./new_folder"
+new_folder="./required_images"
 mkdir -p "$new_folder"
 graphicspath=$(/usr/bin/grep graphicspath *.tex | cut -d '{' -f3 | cut -d '}' -f1)
 for file in $files; do
 	for line in $(/usr/bin/grep \includegraphics $file); do
 		if ! [  $(echo $line | head -c 1) == '%' ]; then
-			path=$(echo $line | cut -d '{' -f2 | cut -d '}' -f1)
+			# path=$(echo $line | cut -d '{' -f2 | cut -d '}' -f1)
+			path=$(echo $line | awk -F "{" '{print $NF}' | awk -F "}" '{print $1}')
 			filename="${path##*/}"
 			ext=$(echo "$filename" | cut -d '.' -f2)
 			path_noex=$(echo $path | awk -F ".$ext" '{print $1}')

@@ -1,7 +1,8 @@
 #!/bin/bash
 
-drive="$1"
-loc=$(lsblk -pn -o NAME,MOUNTPOINT| grep "$drive" | awk '{$1=""; print $0}' | xargs)
-notify-send "$loc"
-wmctrl -Fa 'fileman' || st -n 'fileman' -t 'fileman' lf "$loc"
-lf -remote "send $id cd \"$loc\""
+device=$(lsblk -pnr -o NAME,MOUNTPOINT | dmenu | cut -d " " -f1)
+[ -s $device ] && exit
+udisksctl mount -b $device
+location=$(lsblk -pn -o NAME,MOUNTPOINT | grep $device | cut -d " " -f2- | tr -d '\n' | xargs)
+echo "$location"
+pcmanfm "$location"

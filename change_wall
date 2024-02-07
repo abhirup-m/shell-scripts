@@ -5,6 +5,4 @@ if [ $# = 0 ]; then
 else
 	wallp="$1"
 fi
-/usr/bin/xwallpaper --zoom "$wallp"
-echo "$wallp" > ~/.cache/wallpaper
-gm convert -filter Gaussian -blur 10x10 "$wallp" "$HOME/.cache/lockscreen.png"
+/usr/bin/xwallpaper --zoom "$wallp" && echo "$wallp" > ~/.cache/wallpaper && gm convert -filter Gaussian -blur 10x10 "$wallp" "$HOME/.cache/lockscreen.png"

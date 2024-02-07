@@ -10,7 +10,8 @@ unmounter()
                                 notify-send "Failed to unmount $var"
                         fi
                 else 
-                        if udevil unmount "$var"; then
+			block_dev=$(lsblk -lp | grep "$var" | cut -d ' ' -f1)
+                        if udisksctl unmount -b "$block_dev"; then
                                 notify-send "Unmounted $var"
                         else
                                 notify-send "Failed to unmount $var"
