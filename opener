@@ -9,7 +9,7 @@ for filepath in "$@"; do
 			continue
 		fi
 	elif [[ $(file --mime-type "$filepath" -b) = inode/directory ]]; then
-		vifm --server-name $(vifm --server-list | head -n 1) --remote -c ":tabnew $filepath"
+		vifm --server-name "$(vifm --server-list | head -n 1)" --remote -c ":tabnew $filepath"
 	elif [[ $(file --mime-type "$filepath" -b) = *pdf ]] || [[ $(file --mime-type "$filepath" -b) = *djvu ]]; then
 		evince "$filepath" &>/dev/null & disown
 	elif [[ $(file --mime-type "$filepath" -b) = video/* ]]; then
@@ -22,16 +22,19 @@ for filepath in "$@"; do
 
 	elif [[ $(file --mime-type "$filepath" -b) = audio/* ]]; then
 		lollypop "$filepath" &>/dev/null & disown
+	
+	elif [[ "$filepath" == *.ipynb ]]; then
+		jupyter-lab "$filepath"
 
 	elif [[ "$filepath" == @(*.iso|*.jar|*.msi|*.pkg|*.rar|*.shar|*.tar|*.tgz|*.xar|*.xpi|*.xz|*.zip|*.7z|*.ace|*.ar|*.arc|*.bz2?|*.cab|*.cpio|*.cpt|*.deb|*.dgc|*.dmg|*.gz|*.tar.xz|*.tar.gz|*.tar.bz2) ]]; then
 		echo "Extract $filepath?" | dmenu
 		[ "$?" = 0 ] && xarchiver -ed "$filepath" & disown
 	else
-		if [ $(pgrep neovide) ]; then
-			nvim --server /tmp/nvimsocket --remote-tab-silent "$filepath"
-			wmctrl -xa neovide
+		if [[ $(pgrep nvim) ]] && ls $NVIM_LISTEN_ADDRESS; then
+			nvim --server $NVIM_LISTEN_ADDRESS --remote-tab-silent "$(readlink -f $filepath)"
+			wmctrl -xa Editor
 		else
-			NVIM_LISTEN_ADDRESS=/tmp/nvimsocket neovide "$filepath"
+			st -c Editor nvim --listen $NVIM_LISTEN_ADDRESS "$(readlink -f $filepath)" & disown
 		fi
 	fi
 done
